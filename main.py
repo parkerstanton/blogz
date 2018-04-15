@@ -9,11 +9,11 @@ app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 
 
-class Task(db.Model):
+class Blog(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120))
-    completed = db.Column(db.Boolean)
+    title = db.Column(db.String(120))
+    body = db.Column(db.String(120))
 
     def __init__(self, name):
         self.name = name
@@ -24,28 +24,30 @@ class Task(db.Model):
 def index():
 
     if request.method == 'POST':
-        task_name = request.form['task']
-        new_task = Task(task_name)
-        db.session.add(new_task)
+        blog_title = request.form['blog']
+        blog_body = request.form['body']
+        new_title = Blog(blog_title)
+        new_body = Blog(blog_body)
+        db.session.add(new_title)
+        db.session.add(new_body)
         db.session.commit()
 
-    tasks = Task.query.filter_by(completed=False).all()
-    completed_tasks = Task.query.filter_by(completed=True).all()
-    return render_template('todos.html',title="Get It Done!", 
-        tasks=tasks, completed_tasks=completed_tasks)
+    blogs = Blog.query.all()
+    return render_template('buildablog.html',title="Build-A-Blog", 
+        blogs=blogs)
 
 
-@app.route('/delete-task', methods=['POST'])
-def delete_task():
 
-    task_id = int(request.form['task-id'])
-    task = Task.query.get(task_id)
-    task.completed = True
-    db.session.add(task)
+@app.route('/blog', methods=['POST'])
+def blog():
+
+    blog_id = int(request.form['blog-id'])
+    blog = Blog.query.get(blog_id)
+    db.session.add(blog)
     db.session.commit()
 
     return redirect('/')
 
 
 if __name__ == '__main__':
-app.run()
+    app.run()
