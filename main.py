@@ -1,5 +1,5 @@
 
-from flask import Flask, request, redirect, render_template
+from flask import Flask, request, redirect, render_template,session,flash
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -15,39 +15,50 @@ class Blog(db.Model):
     title = db.Column(db.String(120))
     body = db.Column(db.String(120))
 
-    def __init__(self, name):
-        self.name = name
-        self.completed = False
+    def __init__(self, title,body):
+        self.title = title
+        self.body = body
 
+@app.route('/singleblog')
+def singleblog():
+    blog_id = request.args.get('id')
+    misterquery = Blog.query.get(blog_id).all()
+    db.session.add(misterquery)
+    db.session.commit()
+    return render_template('singleblog',blog_id = blog_id,misterquery=misterquery)
 
-@app.route('/', methods=['POST', 'GET'])
+@app.route('/', methods = ['POST','GET'])
 def index():
 
-    if request.method == 'POST':
-        blog_title = request.form['blog']
-        blog_body = request.form['body']
-        new_title = Blog(blog_title)
-        new_body = Blog(blog_body)
-        db.session.add(new_title)
-        db.session.add(new_body)
-        db.session.commit()
-
     blogs = Blog.query.all()
-    return render_template('buildablog.html',title="Build-A-Blog", 
-        blogs=blogs)
+    return render_template('buildablog.html',blogs=blogs)
 
 
+@app.route('/newpost', methods = ['POST','GET'])
+def newpost():
 
-@app.route('/blog', methods=['POST'])
-def blog():
+    if request.method == 'GET':
+        blogs = Blog.query.all()
+        return render_template('newpost.html')
 
-    blog_id = int(request.form['blog-id'])
-    blog = Blog.query.get(blog_id)
-    db.session.add(blog)
-    db.session.commit()
-
-    return redirect('/')
-
+    if request.method == 'POST':
+        blog_title = request.form['blog_title']
+        blog_body = request.form['blog_body']
+        error_title = ""
+        error_body = ""
+        if (not blog_title) or (blog_title.strip() == ""):
+            error_title = "Add a title ya dummy!"
+        if (not blog_body) or (blog_body.strip() == ""):
+            error_body = "Add a body ya dummy!"
+        if not error_body and not error_title:
+            new_blog = Blog(blog_title,blog_body)
+            db.session.add(new_blog)
+            db.session.commit()
+            blogs = Blog.query.all()
+            return redirect('/')
+        else:
+            return render_template('newpost.html',error_body = error_body, error_title = error_title)
+        
 
 if __name__ == '__main__':
     app.run()

@@ -4,42 +4,18 @@
 
     <h1>Build A Blog!</h1>
     <form method='post'>
+        <h2>Add A Blog:</h2>
         <label>
-                New Blog:
-                <input type = "text" name="blog" />
-        </label>
+                Blog Title:<br/>
+                <input type = "text" name="blog_title" />
+                <a class = "error">{{error_title}}</a><br/>
+                Blog Body:<br/>
+                <textarea type = "text" name="blog_body" rows ="10" 
+                cols = "50"></textarea>
+                <a class = "error">{{error_body}}</a>
+        </label><br/>
         <input type = "submit" value='Add Blog' />
     </form>
 
-    <hr />
-
-    {% if blog_post|length == 0 %}
-    <p> Oops you're missing your blog post!</p>
-    {% if blog_title|length == 0 %}
-    <p> Oops your blog is missing a title! Title it up!</p>
-    {% else %}
-
-        <ul>
-            {% for blog in blogs %}
-            <li>{{blog.title}}
-                <form method = "POST" action = "/newpost" style = "display:inline-block;">
-                    <input type = "hidden" name = "blog-id" value = "{{blog.id}}"/>
-                    <input type = "submit" value = "Done!" />
-                </form>
-            </li>
-            {% endfor %}
-        </ul>
-
-    {% endif %}
-    <hr />
-
-    <h2>Blogs</h2>
-
-    <ul>
-        {% for blog in blogs %}
-        <li>{{blog.title}}</li>
-        {% endfor %}
-
-    </ul>
-
+ 
 {% endblock %}

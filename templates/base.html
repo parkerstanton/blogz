@@ -2,10 +2,13 @@
 <html>
     <head>
         <title>{{title}}</title>
+        <style>
+            .error {color : red;}
+        </style>
     </head>
 <body>
     <div style='float: right'>
-        <a href="/">Main Page</a> | <a href="/">New Post</a>
+        <a href="/">Main Page</a> | <a href="/newpost">New Post</a>
     </div>
     
     {% block content %}
