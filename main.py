@@ -19,18 +19,14 @@ class Blog(db.Model):
         self.title = title
         self.body = body
 
-@app.route('/singleblog',methods = ['POST','GET'])
-def singleblog():
-    blog_id = request.args.get('id')
-    if (blog_id):
-        blog = Blog.query.get(blog_id)
-        return render_template('singleblog.html',blog = blog)
 
 @app.route('/', methods = ['POST','GET'])
 def index():
 
     blogs = Blog.query.all()
     return render_template('buildablog.html',blogs=blogs)
+
+
 
 
 @app.route('/newpost', methods = ['POST','GET'])
@@ -56,6 +52,16 @@ def newpost():
     else:
         return render_template('newpost.html')
         
+
+@app.route('/singleblog',methods = ['POST','GET'])
+def singleblog():
+    blog_id = request.args.get('id')
+    if (blog_id):
+        blog = Blog.query.get(blog_id)
+        return render_template('singleblog.html',blog = blog)
+
+
+
 
 if __name__ == '__main__':
     app.run()
