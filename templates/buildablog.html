@@ -7,9 +7,9 @@
    
         <ul>
         {% for test in blogs %}
-            <h2><a href = "http://localhost:5000/singleblog{{blog_id}}"> {{ test.title }}</a></h2>
+            <h2><a href = "./blog?id={{test.id}}"> {{ test.title }}</a></h2>
         
-            {{ test.body }}
+            <h3>{{ test.body }}</h3>
             <hr />
         {% endfor %}
 

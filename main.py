@@ -22,10 +22,9 @@ class Blog(db.Model):
 @app.route('/singleblog')
 def singleblog():
     blog_id = request.args.get('id')
-    misterquery = Blog.query.get(blog_id).all()
-    db.session.add(misterquery)
-    db.session.commit()
-    return render_template('singleblog',blog_id = blog_id,misterquery=misterquery)
+    if (blog_id):
+        blog = Blog.query.get(blog_id)
+        return render_template('blogpost.html',blog = blog)
 
 @app.route('/', methods = ['POST','GET'])
 def index():
@@ -36,10 +35,6 @@ def index():
 
 @app.route('/newpost', methods = ['POST','GET'])
 def newpost():
-
-    if request.method == 'GET':
-        blogs = Blog.query.all()
-        return render_template('newpost.html')
 
     if request.method == 'POST':
         blog_title = request.form['blog_title']
@@ -54,10 +49,13 @@ def newpost():
             new_blog = Blog(blog_title,blog_body)
             db.session.add(new_blog)
             db.session.commit()
-            blogs = Blog.query.all()
-            return redirect('/')
+            url = './blog?id=' + str(new_blog.id)
+            return redirect(url)
         else:
             return render_template('newpost.html',error_body = error_body, error_title = error_title)
+    else:
+        blogs = Blog.query.all()
+        return render_template('newpost.html')
         
 
 if __name__ == '__main__':
