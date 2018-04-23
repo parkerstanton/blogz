@@ -3,16 +3,20 @@
 {% block content %}
 
 
-    <h1><center>View Blogs</center></h1>
+    <h1><center>Authors</center></h1>
    
         <ul>
-        {% for test in blogs %}
+        <!--{% for test in blogs %}
             <h2><a href = "./singleblog?id={{test.id}}"> {{ test.title }}</a></h2>
         
             <h3>{{ test.body }}</h3>
             <hr />
+        {% endfor %}-->
+        
+        {% for test in user %}
+            <h2><a href = "./index?id={{test.id}}"> {{ test.username }}</a></h2>
+            <hr />
         {% endfor %}
-
     </ul>
 
 {% endblock %}

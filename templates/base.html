@@ -8,9 +8,18 @@
     </head>
 <body>
     <div style='float: right'>
-        <a href="/">Main Page</a> | <a href="/newpost">New Post</a>
+        <a href="/">Main Page</a> | <a href="/newpost">New Post</a> | <a href="/login">Login</a> | <a href="/signup">Sign up</a> | <a href="logout">Logout</a>
     </div>
     
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        <ul>
+        {% for category,message in messages %}
+            <li class="{{category}}">{{message}}</li>
+        {% endfor %}
+        </ul>
+    {% endwith %}
+
+
     {% block content %}
     {% endblock %}
 
