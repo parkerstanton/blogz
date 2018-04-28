@@ -132,15 +132,32 @@ def index():
     blogs = Blog.query.all()
     user = User.query.all()
     
-    return render_template('index.html',blogs=blogs,user=user)
+    return render_template('allblogs.html',blogs=blogs,user=user)
+
+
+@app.route("/blogs", methods = ['GET'])
+def oneauthor():
+
+    blog_id = request.args.get('id')
+    username = request.args.get('username')
+    if (blog_id):
+        blog = Blog.query.get(blog_id)
+        return render_template('singleblog.html',blog = blog)
+    elif (username):
+        user = User.query.filter_by(username=username).first()
+        user_id = user.id
+        allblogs = Blog.query.filter_by(owner_id = user_id).all()
+        return render_template('singleblog.html',username = username, blog = allblogs )
+
 
 
 @app.route('/',methods = ['POST','GET'])
 def misterindex():
 
     user = User.query.all()
+    blogs = Blog.query.all()
 
-    return render_template('buildablog.html',user=user)
+    return render_template('buildablog.html',user=user, blogs = blogs)
 
 
 @app.route('/newpost', methods = ['POST','GET'])
@@ -170,9 +187,15 @@ def newpost():
 @app.route('/singleblog',methods = ['POST','GET'])
 def singleblog():
     blog_id = request.args.get('id')
+    username = request.args.get('username')
     if (blog_id):
         blog = Blog.query.get(blog_id)
         return render_template('singleblog.html',blog = blog)
+    elif (username):
+        user = User.query.filter_by(username=username).first()
+        user_id = user.id
+        allblogs = Blog.query.filter_by(owner_id = user_id).all()
+        return render_template('singleblog.html',username = username, blog = allblogs )
 
 
 
