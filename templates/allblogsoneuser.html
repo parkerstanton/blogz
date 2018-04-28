@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %} 
+
+        <!--{% for test in blogs %}
+            <h2><a href = "./singleblog?username={{test.username}}"> {{ test.title }}</a></h2>
+        
+            <h3>{{ test.body }}</h3>
+            <hr />
+        {% endfor %}-->
+
+        {% for test in blog %}
+            <h2><a href = "./singleblog?id={{test.id}}"> {{ test.title }}</a></h2>
+
+            <h3>{{ test.body }}</h3>
+            <p>{{user}}</p>
+            
+            <h4>Written by: <a href = "./allblogsoneuser?username={{test.owner.username}}">
+            {{user}}</a></h4>
+        
+        {% endfor %}
+
+{% endblock %}

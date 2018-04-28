@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+   
+{% block content %} 
+    
+    
+    {% for test in blogs %}
+            <h2><a href = "./singleblog?id={{test.id}}"> {{ test.title }}</a></h2>
+        
+            <h3>{{ test.body }}</h3>
+            {% for author in user %}
+                {% if test.owner_id == author.id %}
+                    <h4>Written by: <a href = "./allblogsoneuser?username={{author.username}}">{{author.username}}</a></h4>
+                {% endif %}
+            {% endfor %}
+    {% endfor %}
+
+{% endblock %}

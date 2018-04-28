@@ -27,16 +27,17 @@ class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120))
     body = db.Column(db.String(120))
-    
     owner_id = db.Column(db.Integer,db.ForeignKey('user.id'))
-    def __init__(self, title,body):
+
+    def __init__(self, title,body,owner):
         self.title = title
         self.body = body
+        self.owner = owner
        
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup','index','allblogs','misterindex','']
+    allowed_routes = ['login', 'signup','index','allblogsallusers','allauthrs','']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
@@ -126,38 +127,37 @@ def logout():
 
 
 
-@app.route('/allblogs', methods = ['POST','GET'])
+@app.route('/allblogsallusers', methods = ['POST','GET'])
 def index():
 
     blogs = Blog.query.all()
     user = User.query.all()
     
-    return render_template('allblogs.html',blogs=blogs,user=user)
+    return render_template('allblogsallusers.html',blogs=blogs,user=user)
 
 
-@app.route("/blogs", methods = ['GET'])
+@app.route("/allblogsoneuser", methods = ['GET'])
 def oneauthor():
 
-    blog_id = request.args.get('id')
+    #blog_id = request.args.get('id')
     username = request.args.get('username')
-    if (blog_id):
-        blog = Blog.query.get(blog_id)
-        return render_template('singleblog.html',blog = blog)
-    elif (username):
-        user = User.query.filter_by(username=username).first()
-        user_id = user.id
-        allblogs = Blog.query.filter_by(owner_id = user_id).all()
-        return render_template('singleblog.html',username = username, blog = allblogs )
+    #if (blog_id):
+        #blog = Blog.query.get(blog_id)
+        #return render_template('allblogsoneuser.html',blog = blog)
+    user = User.query.filter_by(username=username).first()
+    user_id = user.id
+    allblogs = Blog.query.filter_by(owner_id = user_id).all()
+    return render_template('allblogsoneuser.html',user = username, blog = allblogs )
 
 
 
 @app.route('/',methods = ['POST','GET'])
-def misterindex():
+def allauthors():
 
     user = User.query.all()
     blogs = Blog.query.all()
 
-    return render_template('buildablog.html',user=user, blogs = blogs)
+    return render_template('authors.html',user=user, blogs = blogs)
 
 
 @app.route('/newpost', methods = ['POST','GET'])
@@ -173,7 +173,8 @@ def newpost():
         if (not blog_body) or (blog_body.strip() == ""):
             error_body = "Add a body ya dummy!"
         if not error_body and not error_title:
-            new_blog = Blog(blog_title,blog_body)
+            user = User.query.filter_by(username = session['username']).first()
+            new_blog = Blog(blog_title,blog_body,owner = user)
             db.session.add(new_blog)
             db.session.commit()
             url = './singleblog?id=' + str(new_blog.id)
@@ -184,18 +185,16 @@ def newpost():
         return render_template('newpost.html')
         
 
-@app.route('/singleblog',methods = ['POST','GET'])
+@app.route('/singleblog',methods = ['GET'])
 def singleblog():
+    
     blog_id = request.args.get('id')
-    username = request.args.get('username')
-    if (blog_id):
-        blog = Blog.query.get(blog_id)
-        return render_template('singleblog.html',blog = blog)
-    elif (username):
-        user = User.query.filter_by(username=username).first()
-        user_id = user.id
-        allblogs = Blog.query.filter_by(owner_id = user_id).all()
-        return render_template('singleblog.html',username = username, blog = allblogs )
+    blog_post = Blog.query.filter_by(id = blog_id).first()
+    user = User.query.filter_by(id = blog_post.owner_id).first()
+
+    #user = User.query.filter_by(username=session['username']).first()
+    #allblogs = Blog.query.filter_by(user = user).all()
+    return render_template('singleblog.html', blog = blog_post, user = user)
 
 
 

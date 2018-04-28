@@ -12,9 +12,9 @@
             <h3>{{ test.body }}</h3>
             <hr />
         {% endfor %}-->
-        
+
         {% for test in user %}
-            <h2><a href = "./blogs?id={{test.id}}"> {{ test.username }}</a></h2>
+            <h2><a href = "./allblogsoneuser?username={{test.username}}"> {{ test.username }}</a></h2>
             <hr />
         {% endfor %}
     </ul>
